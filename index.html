@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#123b70">
+<meta name="description" content="Application personnelle d'anglais par la lecture de la Bible NLT pour André Theuriet.">
+<link rel="manifest" href="manifest.webmanifest">
+<title>Theuriet Bible English</title>
+<style>
+:root{--navy:#123b70;--blue:#1769aa;--gold:#f2bd35;--bg:#f3f6fb;--ink:#182538;--muted:#64748b;--green:#16845b;--line:#dce5ef}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:linear-gradient(135deg,#102e58,#1769aa);color:white;padding:22px 18px 18px;border-radius:0 0 24px 24px}
+header .eyebrow{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;opacity:.8}h1{font-size:25px;line-height:1.15;margin:7px 0}header p{margin:6px 0 0;opacity:.9}
+main{max-width:760px;margin:auto;padding:14px 14px 90px}.panel{background:white;border:1px solid var(--line);border-radius:17px;padding:16px;margin:12px 0;box-shadow:0 3px 12px #18395d0b}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:14px}.stat{background:#ffffff18;border:1px solid #ffffff35;border-radius:12px;padding:10px}.stat b{display:block;font-size:22px}.stat span{font-size:11px;opacity:.85}
+.progress{height:9px;background:#e7edf5;border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:linear-gradient(90deg,#16845b,#49b78a);width:0}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:3}
+.tabs button{border:0;border-radius:11px;padding:10px 3px;background:#e4ebf4;color:#29415e;font-weight:700;font-size:12px}.tabs button.active{background:var(--navy);color:white}
+h2{font-size:19px;margin:0 0 12px;color:var(--navy)}h3{font-size:15px;margin:10px 0 6px}
+small,.muted{color:var(--muted)}label{display:block;font-weight:650;font-size:13px;margin:10px 0 5px}
+input,textarea,select{width:100%;padding:11px;border:1px solid #cbd7e5;border-radius:10px;background:white;color:var(--ink);font:inherit}textarea{min-height:76px;resize:vertical}
+button.primary,.action{border:0;background:var(--blue);color:white;padding:11px 14px;border-radius:11px;font-weight:700;cursor:pointer}.secondary{border:1px solid #cbd7e5;background:white;color:var(--navy);padding:10px 12px;border-radius:10px;font-weight:650}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.row>*{flex:1}.book{display:flex;gap:10px;align-items:center;padding:11px 0;border-bottom:1px solid #edf1f6}.book:last-child{border:0}.book .num{background:#e8f1fb;color:var(--navy);font-weight:800;border-radius:9px;padding:8px;min-width:35px;text-align:center}.book .name{flex:1}.book small{display:block}.check{width:22px;height:22px;accent-color:var(--green)}
+.badge{font-size:11px;background:#eaf6f0;color:#16724f;padding:4px 8px;border-radius:99px;font-weight:700}
+.item{padding:12px 0;border-bottom:1px solid #edf1f6}.item:last-child{border:0}.hidden{display:none!important}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#142b48;color:white;padding:10px 16px;border-radius:99px;display:none;z-index:10}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+</style>
+</head>
+<body>
+<header>
+ <div class="eyebrow">Mon espace personnel • Bible NLT</div>
+ <h1>THEURIET BIBLE ENGLISH</h1>
+ <p>Apprendre l'anglais avec la Parole de Dieu</p>
+ <div class="stats">
+  <div class="stat"><b id="booksStat">0/66</b><span>Livres terminés</span></div>
+  <div class="stat"><b id="chaptersStat">0</b><span>Chapitres cochés</span></div>
+  <div class="stat"><b id="wordsStat">0</b><span>Mots appris</span></div>
+ </div>
+</header>
+<main>
+ <section class="panel">
+  <div class="row"><div><b>Ma progression générale</b><div class="muted" id="progressLabel">0 % du parcours</div></div><b id="percent">0%</b></div>
+  <div class="progress" style="margin-top:10px"><i id="progressBar"></i></div>
+  <p class="muted" style="font-size:12px;margin-bottom:0">Tes données sont enregistrées sur cet appareil. Pense à exporter une sauvegarde de temps en temps.</p>
+ </section>
+ <nav class="tabs">
+  <button class="active" data-tab="jour">Aujourd'hui</button><button data-tab="lecture">Lecture</button><button data-tab="mots">Vocabulaire</button><button data-tab="bilan">Mon bilan</button>
+ </nav>
+
+ <section id="jour" class="tabcontent">
+  <div class="panel">
+   <h2>Ma séance du jour</h2>
+   <p class="muted">Un petit pas chaque jour. Coche chaque activité lorsque tu l'as réellement faite.</p>
+   <label for="todayDate">Date de la séance</label><input id="todayDate" type="date">
+   <div id="dailyTasks"></div>
+   <label for="reflection">Ce que j'ai compris aujourd'hui</label><textarea id="reflection" placeholder="Écris quelques phrases en français ou en anglais..."></textarea>
+   <button class="primary" id="saveDay">Enregistrer ma séance</button>
+  </div>
+  <div class="panel">
+   <h2>Exercice d'anglais</h2>
+   <label for="exerciseType">Type d'exercice</label>
+   <select id="exerciseType"><option>Vocabulaire</option><option>Compréhension</option><option>Lecture à haute voix</option><option>Écoute</option><option>Expression orale</option><option>Grammaire</option></select>
+   <label for="exerciseNote">Exercice effectué / résultat</label><textarea id="exerciseNote" placeholder="Ex. : j'ai lu Marc 1 et résumé le passage en anglais..."></textarea>
+   <div class="row"><label style="flex:1" for="exerciseScore">Résultat (sur 10)</label><input style="max-width:110px" id="exerciseScore" type="number" min="0" max="10" placeholder="8"></div>
+   <button class="primary" id="saveExercise">Ajouter à mes exercices</button>
+   <div id="exerciseHistory"></div>
+  </div>
+ </section>
+
+ <section id="lecture" class="tabcontent hidden">
+  <div class="panel">
+   <h2>Mon parcours des 66 livres</h2>
+   <p class="muted">Le parcours commence par les livres recommandés aux débutants, puis continue avec tous les autres livres. Coche un livre lorsque tu l'as terminé. Tu peux aussi suivre les chapitres lus.</p>
+   <input id="bookSearch" placeholder="Rechercher un livre (français ou anglais)...">
+   <div class="row" style="margin:10px 0"><select id="bookFilter"><option value="all">Tous les livres</option><option value="todo">À lire / en cours</option><option value="done">Terminés</option></select><button class="secondary" id="expandAll">Afficher chapitres</button></div>
+   <div id="bookList"></div>
+  </div>
+ </section>
+
+ <section id="mots" class="tabcontent hidden">
+  <div class="panel">
+   <h2>Mon carnet de vocabulaire</h2>
+   <label for="word">Nouveau mot anglais</label><input id="word" placeholder="Ex. : faithful">
+   <label for="meaning">Signification en français</label><input id="meaning" placeholder="Ex. : fidèle">
+   <div class="row"><div><label for="wordBook">Livre biblique</label><select id="wordBook"></select></div><div><label for="wordExample">Phrase d'exemple</label><input id="wordExample" placeholder="God is faithful."></div></div>
+   <button class="primary" id="addWord">Enregistrer ce mot</button>
+   <label for="wordSearch">Rechercher dans mes mots</label><input id="wordSearch" placeholder="Mot ou traduction...">
+   <div id="wordList"></div>
+  </div>
+ </section>
+
+ <section id="bilan" class="tabcontent hidden">
+  <div class="panel">
+   <h2>Mon évolution</h2><div id="summary"></div>
+  </div>
+  <div class="panel">
+   <h2>Sauvegarder mes données</h2>
+   <p class="muted">Exportez un fichier de sauvegarde pour conserver tes progrès si tu changes de téléphone ou de navigateur.</p>
+   <div class="row"><button class="primary" id="exportData">Exporter ma sauvegarde</button><label class="secondary" style="text-align:center;cursor:pointer">Importer une sauvegarde<input id="importData" type="file" accept="application/json" style="display:none"></label></div>
+   <p class="muted" style="font-size:12px">Les données restent privées sur ton appareil, sauf si tu exportes et partages volontairement le fichier.</p>
+  </div>
+  <div class="panel">
+   <h2>Mon engagement</h2>
+   <p><b>Je suis André Theuriet.</b> Je progresse avec régularité, un chapitre et quelques mots à la fois.</p>
+   <p class="muted">Objectif conseillé : 1 heure par jour, 6 jours par semaine, pendant 3 mois.</p>
+  </div>
+ </section>
+ <footer>THEURIET BIBLE ENGLISH • Version personnelle 1.0</footer>
+</main>
+<div id="toast"></div>
+<script>
+const books=[
+["Marc","Mark",16],["Jean","John",21],["1 Jean","1 John",5],["Philippiens","Philippians",4],["Ruth","Ruth",4],["Jonas","Jonah",4],["Jacques","James",5],["Luc","Luke",24],["Actes","Acts",28],["Genèse","Genesis",50],
+["Matthieu","Matthew",28],["Exode","Exodus",40],["Lévitique","Leviticus",27],["Nombres","Numbers",36],["Deutéronome","Deuteronomy",34],["Josué","Joshua",24],["Juges","Judges",21],["1 Samuel","1 Samuel",31],["2 Samuel","2 Samuel",24],["1 Rois","1 Kings",22],["2 Rois","2 Kings",25],["1 Chroniques","1 Chronicles",29],["2 Chroniques","2 Chronicles",36],["Esdras","Ezra",10],["Néhémie","Nehemiah",13],["Esther","Esther",10],
+["Job","Job",42],["Psaumes","Psalms",150],["Proverbes","Proverbs",31],["Ecclésiaste","Ecclesiastes",12],["Cantique des cantiques","Song of Songs",8],
+["Ésaïe","Isaiah",66],["Jérémie","Jeremiah",52],["Lamentations","Lamentations",5],["Ézéchiel","Ezekiel",48],["Daniel","Daniel",12],["Osée","Hosea",14],["Joël","Joel",3],["Amos","Amos",9],["Abdias","Obadiah",1],["Michée","Micah",7],["Nahum","Nahum",3],["Habacuc","Habakkuk",3],["Sophonie","Zephaniah",3],["Aggée","Haggai",2],["Zacharie","Zechariah",14],["Malachie","Malachi",4],
+["Romains","Romans",16],["1 Corinthiens","1 Corinthians",16],["2 Corinthiens","2 Corinthians",13],["Galates","Galatians",6],["Éphésiens","Ephesians",6],["Colossiens","Colossians",4],["1 Thessaloniciens","1 Thessalonians",5],["2 Thessaloniciens","2 Thessalonians",3],["1 Timothée","1 Timothy",6],["2 Timothée","2 Timothy",4],["Tite","Titus",3],["Philémon","Philemon",1],["Hébreux","Hebrews",13],["2 Jean","2 John",1],["3 Jean","3 John",1],["1 Pierre","1 Peter",5],["2 Pierre","2 Peter",3],["Jude","Jude",1],["Apocalypse","Revelation",22]
+];
+const tasks=["Lire un chapitre en anglais (NLT)","Écouter le chapitre en anglais","Apprendre 5 à 10 nouveaux mots","Relire sans regarder la traduction","Lire à haute voix et répéter"];
+const blank=()=>({doneBooks:{},chapters:{},words:[],sessions:{},exercises:[]});
+let data=JSON.parse(localStorage.getItem("theurietBibleEnglish")||"null")||blank();
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("theurietBibleEnglish",JSON.stringify(data));renderStats()}
+function toast(s){$("toast").textContent=s;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2200)}
+function renderStats(){let done=Object.keys(data.doneBooks).filter(k=>data.doneBooks[k]).length;let ch=Object.values(data.chapters).reduce((a,x)=>a+x.length,0);$("booksStat").textContent=done+"/66";$("chaptersStat").textContent=ch;$("wordsStat").textContent=data.words.length;let p=Math.round(done/66*100);$("percent").textContent=p+"%";$("progressLabel").textContent=p+" % des livres terminés";$("progressBar").style.width=p+"%"}
+function renderTasks(){let d=$("todayDate").value;let saved=data.sessions[d]||{checks:[],reflection:""};$("dailyTasks").innerHTML=tasks.map((t,i)=>`<div class="item"><label style="display:flex;align-items:center;gap:10px;margin:0"><input class="check taskcheck" type="checkbox" data-i="${i}" ${saved.checks.includes(i)?"checked":""}>${t}</label></div>`).join("");$("reflection").value=saved.reflection||""}
+function renderBooks(){let q=$("bookSearch").value.toLowerCase(),f=$("bookFilter").value;let list=books.map((b,i)=>({...{fr:b[0],en:b[1],n:b[2],i},done:!!data.doneBooks[i],read:(data.chapters[i]||[]).length})).filter(b=>(b.fr+" "+b.en).toLowerCase().includes(q)).filter(b=>f==="all"||(f==="done"&&b.done)||(f==="todo"&&!b.done));$("bookList").innerHTML=list.map(b=>`<div class="book"><span class="num">${b.i+1}</span><div class="name"><b>${b.fr} <small>(${b.en})</small></b><small>${b.read}/${b.n} chapitres cochés ${b.done?'• Livre terminé':''}</small><div class="progress" style="margin-top:5px"><i style="width:${Math.round(b.read/b.n*100)}%"></i></div><div class="chapterbox hidden" id="chap-${b.i}" style="margin-top:8px;display:flex;flex-wrap:wrap;gap:5px">${Array.from({length:b.n},(_,c)=>`<label style="margin:0;font-size:11px;font-weight:500;background:#f0f4f8;border-radius:7px;padding:5px"><input class="chaptercheck" type="checkbox" data-book="${b.i}" data-ch="${c+1}" style="width:auto" ${(data.chapters[b.i]||[]).includes(c+1)?"checked":""}> ${c+1}</label>`).join("")}</div></div><input class="check bookcheck" aria-label="Livre terminé" type="checkbox" data-book="${b.i}" ${b.done?"checked":""}></div>`).join("")||"<p class='muted'>Aucun livre trouvé.</p>";}
+function renderWords(){let q=$("wordSearch").value.toLowerCase();$("wordList").innerHTML=data.words.filter(w=>(w.word+" "+w.meaning+" "+w.example).toLowerCase().includes(q)).slice().reverse().map((w,idx)=>`<div class="item"><b>${esc(w.word)}</b> — ${esc(w.meaning)} <span class="badge">${esc(w.book||"Bible")}</span><small style="display:block">${esc(w.example||"")}</small><button class="secondary" data-delword="${data.words.indexOf(w)}" style="margin-top:6px;padding:5px 9px">Supprimer</button></div>`).join("")||"<p class='muted'>Ton carnet est encore vide. Ajoute ton premier mot !</p>"}
+function esc(s){return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function renderExercises(){$("exerciseHistory").innerHTML=data.exercises.slice().reverse().slice(0,8).map(x=>`<div class="item"><b>${esc(x.type)}</b> • ${esc(x.date)} ${x.score!==""?"• "+esc(x.score)+"/10":""}<small style="display:block">${esc(x.note)}</small></div>`).join("")}
+function renderSummary(){let done=Object.values(data.doneBooks).filter(Boolean).length,ch=Object.values(data.chapters).reduce((a,x)=>a+x.length,0),days=Object.keys(data.sessions).length,checks=Object.values(data.sessions).reduce((a,s)=>a+s.checks.length,0);$("summary").innerHTML=`<div class="stats" style="color:var(--ink)"><div class="panel"><b>${done}/66</b><small>Livres terminés</small></div><div class="panel"><b>${ch}</b><small>Chapitres cochés</small></div><div class="panel"><b>${data.words.length}</b><small>Mots enregistrés</small></div></div><p><b>${days}</b> jours de séance enregistrés.</p><p><b>${checks}</b> activités quotidiennes cochées.</p><p><b>${data.exercises.length}</b> exercices consignés.</p>`}
+function fillBookSelect(){$("wordBook").innerHTML='<option value="">Choisir un livre</option>'+books.map(b=>`<option>${b[0]} (${b[1]})</option>`).join("")}
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".tabcontent").forEach(x=>x.classList.add("hidden"));$(b.dataset.tab).classList.remove("hidden");if(b.dataset.tab==="bilan")renderSummary()});
+$("todayDate").value=new Date().toISOString().slice(0,10);renderTasks();
+$("todayDate").onchange=renderTasks;
+$("saveDay").onclick=()=>{let d=$("todayDate").value;data.sessions[d]={checks:[...document.querySelectorAll(".taskcheck:checked")].map(x=>+x.dataset.i),reflection:$("reflection").value};save();toast("Séance enregistrée !")};
+$("saveExercise").onclick=()=>{let note=$("exerciseNote").value.trim();if(!note){toast("Décris d'abord ton exercice.");return}data.exercises.push({type:$("exerciseType").value,note,score:$("exerciseScore").value,date:new Date().toLocaleDateString("fr-FR")});$("exerciseNote").value="";$("exerciseScore").value="";save();renderExercises();toast("Exercice ajouté !")};
+$("bookSearch").oninput=renderBooks;$("bookFilter").onchange=renderBooks;
+$("expandAll").onclick=()=>document.querySelectorAll(".chapterbox").forEach(x=>x.classList.toggle("hidden"));
+$("bookList").onchange=e=>{if(e.target.classList.contains("bookcheck")){data.doneBooks[e.target.dataset.book]=e.target.checked;save();renderBooks()}if(e.target.classList.contains("chaptercheck")){let i=e.target.dataset.book,c=+e.target.dataset.ch;data.chapters[i]??=[];data.chapters[i]=data.chapters[i].filter(x=>x!==c);if(e.target.checked)data.chapters[i].push(c);if(data.chapters[i].length===books[i][2])data.doneBooks[i]=true;save();renderBooks()}};
+$("addWord").onclick=()=>{let word=$("word").value.trim(),meaning=$("meaning").value.trim();if(!word||!meaning){toast("Ajoute le mot et sa signification.");return}data.words.push({word,meaning,book:$("wordBook").value,example:$("wordExample").value.trim(),date:new Date().toLocaleDateString("fr-FR")});["word","meaning","wordExample"].forEach(id=>$(id).value="");save();renderWords();toast("Mot ajouté au vocabulaire !")};
+$("wordSearch").oninput=renderWords;$("wordList").onclick=e=>{if(e.target.dataset.delword!==undefined){data.words.splice(+e.target.dataset.delword,1);save();renderWords()}};
+$("exportData").onclick=()=>{let blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="sauvegarde-theuriet-bible-english.json";a.click();URL.revokeObjectURL(a.href)};
+$("importData").onchange=async e=>{try{let obj=JSON.parse(await e.target.files[0].text());if(!obj.words||!obj.sessions)throw Error();data=obj;save();renderBooks();renderWords();renderExercises();toast("Sauvegarde importée !")}catch(err){toast("Fichier de sauvegarde invalide.")}};
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+fillBookSelect();renderStats();renderBooks();renderWords();renderExercises();
+</script>
+</body></html>

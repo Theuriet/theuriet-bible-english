@@ -1,0 +1,10 @@
+THEURIET BIBLE ENGLISH — installation
+
+1. Décompresse le fichier ZIP sur un ordinateur ou héberge le dossier sur un service HTTPS.
+2. Ouvre l'adresse HTTPS du fichier index.html dans Chrome sur Android.
+3. Dans le menu Chrome (⋮), choisis « Installer l'application » ou « Ajouter à l'écran d'accueil ».
+4. Ouvre l'application depuis son icône.
+
+Les données sont enregistrées localement dans le navigateur de ce téléphone. Dans l'onglet « Mon bilan », utilise « Exporter ma sauvegarde » pour conserver une copie. Pour utiliser l'installation hors connexion, ouvre d'abord l'application une fois avec Internet.
+
+Note : le suivi de lecture, les exercices, les mots et les cases cochées sont inclus. Le texte biblique NLT et les fichiers audio ne sont pas intégrés ; ouvre ta Bible NLT ou son audio séparément pour lire/écouter les passages.

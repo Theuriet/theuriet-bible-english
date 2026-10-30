@@ -1,0 +1,9 @@
+{
+  "name": "Theuriet Bible English",
+  "short_name": "Bible English",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f3f6fb",
+  "theme_color": "#123b70",
+  "description": "Application personnelle d'apprentissage de l'anglais avec la Bible NLT."
+}
